@@ -1,15 +1,18 @@
 
 public interface QuadNode {
-    public QuadNode insert();
+    public boolean isLeaf();
 
 
-    public QuadNode remove();
+    public void insert(Point point, int xMin, int yMin, int xMax, int yMax);
+
+
+    public boolean remove();
 
 
     public void dump();
 
 
-    public QuadNode search();
+    public Point search();
 
 
     public Point regionSearch();

@@ -1,22 +1,18 @@
 
 public class Point {
-
+    private String name;
     private int x;
     private int y;
 
-    public Point(int x, int y) {
+    public Point(String name, int x, int y) {
+        this.name = name;
         this.x = x;
         this.y = y;
     }
 
 
-    public void setXCoor(int newX) {
-        x = newX;
-    }
-
-
-    public void setYCoor(int newY) {
-        y = newY;
+    public String getName() {
+        return name;
     }
 
 
@@ -46,5 +42,10 @@ public class Point {
             }
         }
         return false;
+    }
+
+
+    public String toString() {
+        return "(" + name + ", " + x + ", " + y + ")";
     }
 }
