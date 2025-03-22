@@ -1,0 +1,1038 @@
+/**
+ * The PRQuadtree class implements a variant of the PR Quadtree.
+ * It organizes points by position for spatial queries and supports
+ * operations like insert, remove, region search, and finding duplicates.
+ * 
+ * The decomposition rules for this PR Quadtree:
+ * 1. Any node with 1, 2, or 3 points must always be a leaf node.
+ * 2. Any node with more than 3 points that are all at the same (x, y) location
+ * must be a leaf node.
+ * 3. Any node with more than 3 points must be an internal node (unless #2
+ * applies).
+ */
+public class PRQuadtree {
+    // The root of the PRQuadtree
+    private QuadNode root;
+    // The flyweight object representing empty leaf nodes
+    private final QuadNode EMPTY_NODE;
+    // The size of the world
+    private final int WORLD_SIZE = 1024;
+    // Counter for nodes visited during region search
+    private int nodesVisited;
+
+    /**
+     * Constructor to create a new PRQuadtree
+     */
+    public PRQuadtree() {
+        // Create the flyweight empty leaf node
+        EMPTY_NODE = new EmptyLeafNode();
+        // Initialize the root as an empty leaf node
+        root = EMPTY_NODE;
+        nodesVisited = 0;
+    }
+
+    /**
+     * Interface for all QuadTree nodes
+     */
+    private interface QuadNode {
+        /**
+         * Insert a point into the quadtree
+         * 
+         * @param x
+         *            the x-coordinate
+         * @param y
+         *            the y-coordinate
+         * @param name
+         *            the name of the point
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         * @return the updated node after insertion
+         */
+        QuadNode insert(
+            int x,
+            int y,
+            String name,
+            int xPos,
+            int yPos,
+            int size);
+
+
+        /**
+         * Remove a point from the quadtree by coordinates
+         * 
+         * @param x
+         *            the x-coordinate
+         * @param y
+         *            the y-coordinate
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         * @return the updated node after removal and a Point if one was removed
+         */
+        RemoveResult remove(int x, int y, int xPos, int yPos, int size);
+
+
+        /**
+         * Remove a point from the quadtree by name
+         * 
+         * @param name
+         *            the name of the point
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         * @return the updated node after removal and a Point if one was removed
+         */
+        RemoveResult removeByName(String name, int xPos, int yPos, int size);
+
+
+        /**
+         * Find all points within a given region
+         * 
+         * @param x
+         *            the x-coordinate of the search region
+         * @param y
+         *            the y-coordinate of the search region
+         * @param w
+         *            the width of the search region
+         * @param h
+         *            the height of the search region
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         * @param results
+         *            the list to add found points to
+         */
+        void regionSearch(
+            int x,
+            int y,
+            int w,
+            int h,
+            int xPos,
+            int yPos,
+            int size,
+            java.util.ArrayList<Point> results);
+
+
+        /**
+         * Find all duplicate points
+         * 
+         * @param dups
+         *            the map to store duplicate positions
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         */
+        void findDuplicates(
+            java.util.HashMap<String, java.util.ArrayList<Point>> dups,
+            int xPos,
+            int yPos,
+            int size);
+
+
+        /**
+         * Dump the tree nodes for output
+         * 
+         * @param level
+         *            the current level in the tree (for indentation)
+         * @param sb
+         *            the string builder to append the dump to
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         */
+        void dump(int level, StringBuilder sb, int xPos, int yPos, int size);
+
+
+        /**
+         * Check if the node is an empty leaf
+         * 
+         * @return true if the node is an empty leaf
+         */
+        boolean isEmpty();
+    }
+
+
+    /**
+     * Class representing an empty leaf node (flyweight)
+     */
+    private class EmptyLeafNode implements QuadNode {
+
+        @Override
+        public QuadNode insert(
+            int x,
+            int y,
+            String name,
+            int xPos,
+            int yPos,
+            int size) {
+            // Create a new leaf node with the point
+            LeafNode newLeaf = new LeafNode();
+            newLeaf.addPoint(new Point(name, x, y));
+            return newLeaf;
+        }
+
+
+        @Override
+        public RemoveResult remove(
+            int x,
+            int y,
+            int xPos,
+            int yPos,
+            int size) {
+            // Empty node, nothing to remove
+            return new RemoveResult(EMPTY_NODE, null);
+        }
+
+
+        @Override
+        public RemoveResult removeByName(
+            String name,
+            int xPos,
+            int yPos,
+            int size) {
+            // Empty node, nothing to remove
+            return new RemoveResult(EMPTY_NODE, null);
+        }
+
+
+        @Override
+        public void regionSearch(
+            int x,
+            int y,
+            int w,
+            int h,
+            int xPos,
+            int yPos,
+            int size,
+            java.util.ArrayList<Point> results) {
+            // Increment nodes visited count
+            nodesVisited++;
+            // Empty node, nothing to search
+        }
+
+
+        @Override
+        public void findDuplicates(
+            java.util.HashMap<String, java.util.ArrayList<Point>> dups,
+            int xPos,
+            int yPos,
+            int size) {
+            // Empty node, no duplicates
+        }
+
+
+        @Override
+        public void dump(
+            int level,
+            StringBuilder sb,
+            int xPos,
+            int yPos,
+            int size) {
+            // Append indentation
+            for (int i = 0; i < level * 2; i++) {
+                sb.append(" ");
+            }
+            sb.append("Node at ").append(xPos).append(", ").append(yPos);
+            sb.append(", ").append(size).append(": Empty\n");
+        }
+
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+    }
+
+
+    /**
+     * Class representing a leaf node containing points
+     */
+    private class LeafNode implements QuadNode {
+        // List to store the points in this leaf
+        private java.util.ArrayList<Point> points;
+
+        /**
+         * Constructor to create a new leaf node
+         */
+        public LeafNode() {
+            points = new java.util.ArrayList<>();
+        }
+
+
+        /**
+         * Add a point to this leaf
+         * 
+         * @param point
+         *            the point to add
+         */
+        public void addPoint(Point point) {
+            points.add(point);
+        }
+
+
+        @Override
+        public QuadNode insert(
+            int x,
+            int y,
+            String name,
+            int xPos,
+            int yPos,
+            int size) {
+            // Add the new point
+            Point newPoint = new Point(name, x, y);
+
+            // Check if this would exceed decomposition rules
+            if (points.size() < 3) {
+                // Rule 1: Nodes with 1-3 points remain leaf nodes
+                addPoint(newPoint);
+                return this;
+            }
+
+            // Check if all existing points have the same coordinates
+            boolean allSamePosition = true;
+            int firstX = points.get(0).getX();
+            int firstY = points.get(0).getY();
+
+            for (Point p : points) {
+                if (p.getX() != firstX || p.getY() != firstY) {
+                    allSamePosition = false;
+                    break;
+                }
+            }
+
+            // Check if the new point has the same position
+            if (allSamePosition && x == firstX && y == firstY) {
+                // Rule 2: If all points (including the new one) have the same
+                // position,
+                // keep as a leaf node
+                addPoint(newPoint);
+                return this;
+            }
+
+            // Rule 3: If we have > 3 points not all at the same position, split
+            // into internal node
+            InternalNode internalNode = new InternalNode();
+
+            // Add all existing points to the internal node
+            for (Point p : points) {
+                internalNode = (InternalNode)internalNode.insert(p.getX(), p
+                    .getY(), p.getName(), xPos, yPos, size);
+            }
+
+            // Add the new point
+            return internalNode.insert(x, y, name, xPos, yPos, size);
+        }
+
+
+        @Override
+        public RemoveResult remove(
+            int x,
+            int y,
+            int xPos,
+            int yPos,
+            int size) {
+            // Find a point with the given coordinates
+            for (int i = 0; i < points.size(); i++) {
+                Point p = points.get(i);
+                if (p.getX() == x && p.getY() == y) {
+                    // Remove the point
+                    Point removedPoint = points.remove(i);
+
+                    // If no points left, return empty node
+                    if (points.isEmpty()) {
+                        return new RemoveResult(EMPTY_NODE, removedPoint);
+                    }
+
+                    // Otherwise, return this node and the removed point
+                    return new RemoveResult(this, removedPoint);
+                }
+            }
+
+            // No point found with the given coordinates
+            return new RemoveResult(this, null);
+        }
+
+
+        @Override
+        public RemoveResult removeByName(
+            String name,
+            int xPos,
+            int yPos,
+            int size) {
+            // Find a point with the given name
+            for (int i = 0; i < points.size(); i++) {
+                Point p = points.get(i);
+                if (p.getName().equals(name)) {
+                    // Remove the point
+                    Point removedPoint = points.remove(i);
+
+                    // If no points left, return empty node
+                    if (points.isEmpty()) {
+                        return new RemoveResult(EMPTY_NODE, removedPoint);
+                    }
+
+                    // Otherwise, return this node and the removed point
+                    return new RemoveResult(this, removedPoint);
+                }
+            }
+
+            // No point found with the given name
+            return new RemoveResult(this, null);
+        }
+
+
+        @Override
+        public void regionSearch(
+            int x,
+            int y,
+            int w,
+            int h,
+            int xPos,
+            int yPos,
+            int size,
+            java.util.ArrayList<Point> results) {
+            // Increment nodes visited count
+            nodesVisited++;
+
+            // Check each point to see if it falls within the search region
+            for (Point p : points) {
+                int px = p.getX();
+                int py = p.getY();
+
+                if (px >= x && px < x + w && py >= y && py < y + h) {
+                    results.add(p);
+                }
+            }
+        }
+
+
+        @Override
+        public void findDuplicates(
+            java.util.HashMap<String, java.util.ArrayList<Point>> dups,
+            int xPos,
+            int yPos,
+            int size) {
+            // Group points by their coordinates
+            java.util.HashMap<String, java.util.ArrayList<Point>> localDups =
+                new java.util.HashMap<>();
+
+            for (Point p : points) {
+                String key = p.getX() + "," + p.getY();
+                if (!localDups.containsKey(key)) {
+                    localDups.put(key, new java.util.ArrayList<>());
+                }
+                localDups.get(key).add(p);
+            }
+
+            // Add duplicates to the result map
+            for (java.util.Map.Entry<String, java.util.ArrayList<Point>> entry : localDups
+                .entrySet()) {
+                if (entry.getValue().size() > 1) {
+                    dups.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
+
+        @Override
+        public void dump(
+            int level,
+            StringBuilder sb,
+            int xPos,
+            int yPos,
+            int size) {
+            // Append indentation
+            for (int i = 0; i < level * 2; i++) {
+                sb.append(" ");
+            }
+
+            sb.append("Node at ").append(xPos).append(", ").append(yPos);
+            sb.append(", ").append(size).append(":\n");
+
+            // Print each point
+            for (Point p : points) {
+                for (int i = 0; i < (level + 1) * 2; i++) {
+                    sb.append(" ");
+                }
+                sb.append("(").append(p.getName()).append(", ");
+                sb.append(p.getX()).append(", ").append(p.getY()).append(
+                    ")\n");
+            }
+        }
+
+
+        @Override
+        public boolean isEmpty() {
+            return points.isEmpty();
+        }
+    }
+
+
+    /**
+     * Class representing an internal node with four children
+     */
+    private class InternalNode implements QuadNode {
+        // The four children of this node (NW, NE, SW, SE)
+        private QuadNode[] children;
+
+        /**
+         * Constructor to create a new internal node
+         */
+        public InternalNode() {
+            children = new QuadNode[4];
+            // Initialize all children as empty nodes
+            for (int i = 0; i < 4; i++) {
+                children[i] = EMPTY_NODE;
+            }
+        }
+
+
+        /**
+         * Get the quadrant index for a point
+         * 
+         * @param x
+         *            the x-coordinate
+         * @param y
+         *            the y-coordinate
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         * @return the quadrant index (0=NW, 1=NE, 2=SW, 3=SE)
+         */
+        private int getQuadrant(int x, int y, int xPos, int yPos, int size) {
+            int halfSize = size / 2;
+            int midX = xPos + halfSize;
+            int midY = yPos + halfSize;
+
+            if (x < midX) {
+                if (y < midY) {
+                    return 0; // NW
+                }
+                else {
+                    return 2; // SW
+                }
+            }
+            else {
+                if (y < midY) {
+                    return 1; // NE
+                }
+                else {
+                    return 3; // SE
+                }
+            }
+        }
+
+
+        /**
+         * Get the position of a child quadrant
+         * 
+         * @param quadrant
+         *            the quadrant index
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         * @return an array with the [x, y, size] of the child quadrant
+         */
+        private int[] getQuadrantPosition(
+            int quadrant,
+            int xPos,
+            int yPos,
+            int size) {
+            int halfSize = size / 2;
+            int[] result = new int[3];
+
+            switch (quadrant) {
+                case 0: // NW
+                    result[0] = xPos;
+                    result[1] = yPos;
+                    break;
+                case 1: // NE
+                    result[0] = xPos + halfSize;
+                    result[1] = yPos;
+                    break;
+                case 2: // SW
+                    result[0] = xPos;
+                    result[1] = yPos + halfSize;
+                    break;
+                case 3: // SE
+                    result[0] = xPos + halfSize;
+                    result[1] = yPos + halfSize;
+                    break;
+            }
+
+            result[2] = halfSize;
+            return result;
+        }
+
+
+        @Override
+        public QuadNode insert(
+            int x,
+            int y,
+            String name,
+            int xPos,
+            int yPos,
+            int size) {
+            // Find the appropriate quadrant
+            int quadrant = getQuadrant(x, y, xPos, yPos, size);
+            int[] quadPos = getQuadrantPosition(quadrant, xPos, yPos, size);
+
+            // Insert into the appropriate child
+            children[quadrant] = children[quadrant].insert(x, y, name,
+                quadPos[0], quadPos[1], quadPos[2]);
+
+            return this;
+        }
+
+
+        @Override
+        public RemoveResult remove(
+            int x,
+            int y,
+            int xPos,
+            int yPos,
+            int size) {
+            // Find the appropriate quadrant
+            int quadrant = getQuadrant(x, y, xPos, yPos, size);
+            int[] quadPos = getQuadrantPosition(quadrant, xPos, yPos, size);
+
+            // Remove from the appropriate child
+            RemoveResult result = children[quadrant].remove(x, y, quadPos[0],
+                quadPos[1], quadPos[2]);
+
+            children[quadrant] = result.getNode();
+
+            // Check if we should merge nodes
+            if (shouldMerge()) {
+                QuadNode mergedNode = mergeNodes(xPos, yPos, size);
+                return new RemoveResult(mergedNode, result.getRemovedPoint());
+            }
+
+            return new RemoveResult(this, result.getRemovedPoint());
+        }
+
+
+        @Override
+        public RemoveResult removeByName(
+            String name,
+            int xPos,
+            int yPos,
+            int size) {
+            // Try each quadrant until we find and remove the point
+            for (int i = 0; i < 4; i++) {
+                int[] quadPos = getQuadrantPosition(i, xPos, yPos, size);
+                RemoveResult result = children[i].removeByName(name,
+                    quadPos[0], quadPos[1], quadPos[2]);
+
+                if (result.getRemovedPoint() != null) {
+                    // Point was found and removed
+                    children[i] = result.getNode();
+
+                    // Check if we should merge nodes
+                    if (shouldMerge()) {
+                        QuadNode mergedNode = mergeNodes(xPos, yPos, size);
+                        return new RemoveResult(mergedNode, result
+                            .getRemovedPoint());
+                    }
+
+                    return new RemoveResult(this, result.getRemovedPoint());
+                }
+            }
+
+            // Point not found in any quadrant
+            return new RemoveResult(this, null);
+        }
+
+
+        /**
+         * Check if the children nodes should be merged into a leaf
+         * 
+         * @return true if the nodes should be merged
+         */
+        private boolean shouldMerge() {
+            java.util.ArrayList<Point> allPoints = new java.util.ArrayList<>();
+
+            // Count total non-empty leaf nodes and collect all points
+            for (int i = 0; i < 4; i++) {
+                if (children[i] instanceof LeafNode) {
+                    LeafNode leaf = (LeafNode)children[i];
+                    allPoints.addAll(leaf.points);
+                }
+                else if (!(children[i] instanceof EmptyLeafNode)) {
+                    // If any child is an internal node, don't merge
+                    return false;
+                }
+            }
+
+            // If we have 3 or fewer points, we should merge
+            if (allPoints.size() <= 3) {
+                return true;
+            }
+
+            // Check if all points have the same coordinates
+            if (!allPoints.isEmpty()) {
+                int firstX = allPoints.get(0).getX();
+                int firstY = allPoints.get(0).getY();
+
+                for (Point p : allPoints) {
+                    if (p.getX() != firstX || p.getY() != firstY) {
+                        // Not all points have the same coordinates
+                        return false;
+                    }
+                }
+
+                // All points have the same coordinates, should merge
+                return true;
+            }
+
+            return false;
+        }
+
+
+        /**
+         * Merge child nodes into a leaf node
+         * 
+         * @param xPos
+         *            the x-position of the current quadrant
+         * @param yPos
+         *            the y-position of the current quadrant
+         * @param size
+         *            the size of the current quadrant
+         * @return the merged leaf node
+         */
+        private QuadNode mergeNodes(int xPos, int yPos, int size) {
+            LeafNode mergedNode = new LeafNode();
+
+            // Collect all points from child nodes
+            for (int i = 0; i < 4; i++) {
+                if (children[i] instanceof LeafNode) {
+                    LeafNode leaf = (LeafNode)children[i];
+                    for (Point p : leaf.points) {
+                        mergedNode.addPoint(p);
+                    }
+                }
+            }
+
+            // If no points, return empty node
+            if (mergedNode.points.isEmpty()) {
+                return EMPTY_NODE;
+            }
+
+            return mergedNode;
+        }
+
+
+        @Override
+        public void regionSearch(
+            int x,
+            int y,
+            int w,
+            int h,
+            int xPos,
+            int yPos,
+            int size,
+            java.util.ArrayList<Point> results) {
+            // Increment nodes visited count
+            nodesVisited++;
+
+            // Check if this quadrant intersects with the search region
+            if (!intersects(x, y, w, h, xPos, yPos, size)) {
+                return;
+            }
+
+            // Search all child quadrants
+            for (int i = 0; i < 4; i++) {
+                int[] quadPos = getQuadrantPosition(i, xPos, yPos, size);
+                children[i].regionSearch(x, y, w, h, quadPos[0], quadPos[1],
+                    quadPos[2], results);
+            }
+        }
+
+
+        /**
+         * Check if a quadrant intersects with a search region
+         * 
+         * @param x
+         *            the x-coordinate of the search region
+         * @param y
+         *            the y-coordinate of the search region
+         * @param w
+         *            the width of the search region
+         * @param h
+         *            the height of the search region
+         * @param qx
+         *            the x-position of the quadrant
+         * @param qy
+         *            the y-position of the quadrant
+         * @param qsize
+         *            the size of the quadrant
+         * @return true if the quadrant intersects with the search region
+         */
+        private boolean intersects(
+            int x,
+            int y,
+            int w,
+            int h,
+            int qx,
+            int qy,
+            int qsize) {
+            // Check if the quadrant is completely outside the search region
+            return !(qx >= x + w || qx + qsize <= x || qy >= y + h || qy
+                + qsize <= y);
+        }
+
+
+        @Override
+        public void findDuplicates(
+            java.util.HashMap<String, java.util.ArrayList<Point>> dups,
+            int xPos,
+            int yPos,
+            int size) {
+            // Search all child quadrants
+            for (int i = 0; i < 4; i++) {
+                int[] quadPos = getQuadrantPosition(i, xPos, yPos, size);
+                children[i].findDuplicates(dups, quadPos[0], quadPos[1],
+                    quadPos[2]);
+            }
+        }
+
+
+        @Override
+        public void dump(
+            int level,
+            StringBuilder sb,
+            int xPos,
+            int yPos,
+            int size) {
+            // Append indentation
+            for (int i = 0; i < level * 2; i++) {
+                sb.append(" ");
+            }
+
+            sb.append("Node at ").append(xPos).append(", ").append(yPos);
+            sb.append(", ").append(size).append(": Internal\n");
+
+            // Dump each child
+            String[] quadrantNames = { "NW", "NE", "SW", "SE" };
+            for (int i = 0; i < 4; i++) {
+                // Add quadrant name
+                for (int j = 0; j < (level + 1) * 2; j++) {
+                    sb.append(" ");
+                }
+                //sb.append(quadrantNames[i]).append(":\n");
+
+                // Dump the child
+                int[] quadPos = getQuadrantPosition(i, xPos, yPos, size);
+                children[i].dump(level + 1, sb, quadPos[0], quadPos[1],
+                    quadPos[2]);
+            }
+        }
+
+
+        @Override
+        public boolean isEmpty() {
+            // An internal node is never empty
+            return false;
+        }
+    }
+
+
+    /**
+     * Class to hold the result of a remove operation
+     */
+    private class RemoveResult {
+        private QuadNode node;
+        private Point removedPoint;
+
+        /**
+         * Constructor for a remove result
+         * 
+         * @param node
+         *            the updated node after removal
+         * @param removedPoint
+         *            the point that was removed (null if none)
+         */
+        public RemoveResult(QuadNode node, Point removedPoint) {
+            this.node = node;
+            this.removedPoint = removedPoint;
+        }
+
+
+        /**
+         * Get the updated node
+         * 
+         * @return the updated node
+         */
+        public QuadNode getNode() {
+            return node;
+        }
+
+
+        /**
+         * Get the removed point
+         * 
+         * @return the removed point (null if none)
+         */
+        public Point getRemovedPoint() {
+            return removedPoint;
+        }
+    }
+
+    /**
+     * Insert a point into the quadtree
+     * 
+     * @param x
+     *            the x-coordinate
+     * @param y
+     *            the y-coordinate
+     * @param name
+     *            the name of the point
+     * @return true if the point was inserted successfully
+     */
+    public boolean insert(int x, int y, String name) {
+        // Check if point is within the world boundaries
+        if (x < 0 || y < 0 || x >= WORLD_SIZE || y >= WORLD_SIZE) {
+            return false;
+        }
+
+        // Insert the point into the tree
+        root = root.insert(x, y, name, 0, 0, WORLD_SIZE);
+        return true;
+    }
+
+
+    /**
+     * Remove a point from the quadtree by coordinates
+     * 
+     * @param x
+     *            the x-coordinate
+     * @param y
+     *            the y-coordinate
+     * @return the removed point, or null if no point was found
+     */
+    public Point remove(int x, int y) {
+        // Check if point is within the world boundaries
+        if (x < 0 || y < 0 || x >= WORLD_SIZE || y >= WORLD_SIZE) {
+            return null;
+        }
+
+        // Remove the point from the tree
+        RemoveResult result = root.remove(x, y, 0, 0, WORLD_SIZE);
+        root = result.getNode();
+
+        return result.getRemovedPoint();
+    }
+
+
+    /**
+     * Remove a point from the quadtree by name
+     * 
+     * @param name
+     *            the name of the point
+     * @return the removed point, or null if no point was found
+     */
+    public Point removeByName(String name) {
+        // Remove the point from the tree
+        RemoveResult result = root.removeByName(name, 0, 0, WORLD_SIZE);
+        root = result.getNode();
+
+        return result.getRemovedPoint();
+    }
+
+
+    /**
+     * Find all points within a given region
+     * 
+     * @param x
+     *            the x-coordinate of the search region
+     * @param y
+     *            the y-coordinate of the search region
+     * @param w
+     *            the width of the search region
+     * @param h
+     *            the height of the search region
+     * @return a list of points within the region
+     */
+    public java.util.ArrayList<Point> regionSearch(
+        int x,
+        int y,
+        int w,
+        int h) {
+        // Reset nodes visited counter
+        nodesVisited = 0;
+
+        // Create a list to store the results
+        java.util.ArrayList<Point> results = new java.util.ArrayList<>();
+
+        // Search the tree
+        root.regionSearch(x, y, w, h, 0, 0, WORLD_SIZE, results);
+
+        return results;
+    }
+
+
+    /**
+     * Get the number of nodes visited during the last region search
+     * 
+     * @return the number of nodes visited
+     */
+    public int getNodesVisited() {
+        return nodesVisited;
+    }
+
+
+    /**
+     * Find all duplicate points in the quadtree
+     * 
+     * @return a map of positions to lists of points at that position
+     */
+    public java.util.HashMap<String, java.util.ArrayList<Point>> findDuplicates() {
+        java.util.HashMap<String, java.util.ArrayList<Point>> dups =
+            new java.util.HashMap<>();
+
+        // Find duplicates in the tree
+        root.findDuplicates(dups, 0, 0, WORLD_SIZE);
+
+        return dups;
+    }
+
+
+    /**
+     * Dump the contents of the quadtree for display
+     * 
+     * @return a string representation of the quadtree
+     */
+    public void dump() {
+        StringBuilder sb = new StringBuilder();
+
+        // Dump the tree
+        root.dump(0, sb, 0, 0, WORLD_SIZE);
+        System.out.println(sb.toString());
+// return sb.toString();
+    }
+}

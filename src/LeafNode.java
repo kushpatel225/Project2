@@ -1,73 +1,293 @@
-import java.util.ArrayList;
 
 public class LeafNode implements QuadNode {
-    private ArrayList<Point> points;
+    // List to store the points in this leaf
+    ArrayList points;
 
+    /**
+     * Constructor to create a new leaf node
+     */
     public LeafNode() {
-        this.points = new ArrayList<>();
+        points = new ArrayList();
     }
 
 
-    public ArrayList<Point> getPoints() {
+    public ArrayList getPoints() {
         return points;
     }
 
 
-    public void insert(Point point, int xMin, int yMin, int xMax, int yMax) {
+    /**
+     * Add a point to this leaf
+     * 
+     * @param point
+     *            the point to add
+     */
+    public void addPoint(Point point) {
         points.add(point);
-        if (points.size() > 3) {
-            split(xMin, yMin, xMax, yMax);
-        }
     }
 
 
-    private void split(int xMin, int yMin, int xMax, int yMax) {
-        InternalNode parent = new InternalNode();
+    @Override
+    public QuadNode insert(
+        int x,
+        int y,
+        String name,
+        int xPos,
+        int yPos,
+        int size) {
+        // Add the new point
+        Point newPoint = new Point(name, x, y);
 
-        for (Point pt : points) {
-            int midX = (xMin + xMax) / 2;
-            int midY = (yMin + yMax) / 2;
-
-            if (pt.getXCoor() < midX && pt.getYCoor() < midY) {
-                parent.setNorthwest(new LeafNode());
-                ((LeafNode)parent.getNorthwest()).insert(pt, xMin, yMin, xMax,
-                    yMax);
-            }
-            else if (pt.getXCoor() >= midX && pt.getYCoor() < midY) {
-                parent.setNortheast(new LeafNode());
-                ((LeafNode)parent.getNortheast()).insert(pt, xMin, yMin, xMax,
-                    yMax);
-            }
-            else if (pt.getXCoor() < midX && pt.getYCoor() >= midY) {
-                parent.setSouthwest(new LeafNode());
-                ((LeafNode)parent.getSouthwest()).insert(pt, xMin, yMin, xMax,
-                    yMax);
-            }
-            else {
-                parent.setSoutheast(new LeafNode());
-                ((LeafNode)parent.getSoutheast()).insert(pt, xMin, yMin, xMax,
-                    yMax);
-            }
+        // Check if this would exceed decomposition rules
+        if (points.size() < 3) {
+            // Rule 1: Nodes with 1-3 points remain leaf nodes
+            addPoint(newPoint);
+            return this;
         }
-    }
 
+        // Check if all existing points have the same coordinates
+        boolean allSamePosition = true;
+        int firstX = points.get(0).getX();
+        int firstY = points.get(0).getY();
 
-    public boolean remove(String name) {
         for (int i = 0; i < points.size(); i++) {
-            if (points.get(i).getName().equals(name)) {
-                points.remove(i);
-                return true;
+            if (points.get(i).getX() != firstX || points.get(i)
+                .getY() != firstY) {
+                allSamePosition = false;
+                break;
             }
         }
-        return false;
+
+        // Check if the new point has the same position
+        if (allSamePosition && x == firstX && y == firstY) {
+            // Rule 2: If all points (including the new one) have the same
+            // position,
+            // keep as a leaf node
+            addPoint(newPoint);
+            return this;
+        }
+
+        // Rule 3: If we have > 3 points not all at the same position, split
+        // into internal node
+        InternalNode internalNode = new InternalNode();
+
+        // Add all existing points to the internal node
+        for (int i = 0; i < points.size(); i++) {
+            internalNode = (InternalNode)internalNode.insert(points.get(i)
+                .getX(), points.get(i).getY(), points.get(i).getName(), xPos,
+                yPos, size);
+        }
+
+        // Add the new point
+        return internalNode.insert(x, y, name, xPos, yPos, size);
     }
 
 
-    public boolean isLeaf() {
-        return true;
+    @Override
+    public RemoveResult remove(int x, int y, int xPos, int yPos, int size) {
+        // Find a point with the given coordinates
+        for (int i = 0; i < points.size(); i++) {
+            Point p = points.get(i);
+            if (p.getX() == x && p.getY() == y) {
+                // Remove the point
+                Point removedPoint = points.remove(points.get(i));
+
+                // If no points left, return empty node
+                if (points.isEmpty()) {
+                    return new RemoveResult(EmptyNode.getInstance(),
+                        removedPoint);
+                }
+
+                // Otherwise, return this node and the removed point
+                return new RemoveResult(this, removedPoint);
+            }
+        }
+
+        // No point found with the given coordinates
+        return new RemoveResult(this, null);
     }
 
 
+    @Override
+    public RemoveResult removeByName(
+        String name,
+        int xPos,
+        int yPos,
+        int size) {
+        // Find a point with the given name
+        for (int i = 0; i < points.size(); i++) {
+            Point p = points.get(i);
+            if (p.getName().equals(name)) {
+                // Remove the point
+                Point removedPoint = points.remove(points.get(i));
+
+                // If no points left, return empty node
+                if (points.isEmpty()) {
+                    return new RemoveResult(EmptyNode.getInstance(),
+                        removedPoint);
+                }
+
+                // Otherwise, return this node and the removed point
+                return new RemoveResult(this, removedPoint);
+            }
+        }
+
+        // No point found with the given name
+        return new RemoveResult(this, null);
+    }
+
+
+    @Override
+    public void regionSearch(
+        int x,
+        int y,
+        int w,
+        int h,
+        int xPos,
+        int yPos,
+        int size,
+        ArrayList results) {
+        // Only count if this node intersects with the search region
+        if (intersects(x, y, w, h, xPos, yPos, size)) {
+            // Increment nodes visited count
+            PRQuadtree.nodesVisited++; // May not work since its static
+
+            // Check each point to see if it falls within the search region
+            for (int i = 0; i < points.size(); i++) {
+                int px = points.get(i).getX();
+                int py = points.get(i).getY();
+
+                if (px >= x && px < x + w && py >= y && py < y + h) {
+                    results.add(points.get(i));
+                }
+            }
+        }
+    }
+
+
+    private boolean intersects(
+        int x,
+        int y,
+        int w,
+        int h,
+        int qx,
+        int qy,
+        int qsize) {
+        // Check if the quadrant is completely outside the search region
+        return !(qx >= x + w || qx + qsize <= x || qy >= y + h || qy
+            + qsize <= y);
+    }
+// @Override
+// public void regionSearch(
+// int x,
+// int y,
+// int w,
+// int h,
+// int xPos,
+// int yPos,
+// int size,
+// java.util.ArrayList<Point> results) {
+//// Increment nodes visited count
+// nodesVisited++;
+//
+//// Check each point to see if it falls within the search region
+// for (Point p : points) {
+// int px = p.getX();
+// int py = p.getY();
+//
+// if (px >= x && px < x + w && py >= y && py < y + h) {
+// results.add(p);
+// }
+// }
+// }
+
+
+    @Override
+    public void findDuplicates(
+        java.util.HashMap<String, ArrayList> dups,
+        int xPos,
+        int yPos,
+        int size) {
+        // Group points by their coordinates
+        java.util.HashMap<String, ArrayList> localDups =
+            new java.util.HashMap<>();
+
+        for (int i = 0; i < points.size(); i++) {
+            String key = points.get(i).getX() + "," + points.get(i).getY();
+            if (!localDups.containsKey(key)) {
+                localDups.put(key, new ArrayList());
+            }
+            localDups.get(key).add(points.get(i));
+        }
+
+        // Add duplicates to the result map
+        for (java.util.Map.Entry<String, ArrayList> entry : localDups
+            .entrySet()) {
+            if (entry.getValue().size() > 1) {
+                dups.put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+
+    @Override
+    public void dump(
+        int level,
+        StringBuilder sb,
+        int xPos,
+        int yPos,
+        int size,
+        int[] nodesPrinted) {
+        // Increment nodes count
+        nodesPrinted[0]++;
+
+        // Append indentation
+        for (int i = 0; i < level * 2; i++) {
+            sb.append(" ");
+        }
+
+        sb.append("Node at ").append(xPos).append(", ").append(yPos);
+        sb.append(", ").append(size).append(":\n");
+
+        // Print each point
+        for (int j = 0; j < points.size(); j++) {
+            for (int i = 0; i < (level + 1) * 2; i++) {
+                sb.append(" ");
+            }
+            Point pt = points.get(j);
+            sb.append("(").append(pt.getName()).append(", ");
+            sb.append(pt.getX()).append(", ").append(pt.getY()).append(")\n");
+        }
+    }
+
+// @Override
+// public void dump(
+// int level,
+// StringBuilder sb,
+// int xPos,
+// int yPos,
+// int size) {
+//// Append indentation
+// for (int i = 0; i < level * 2; i++) {
+// sb.append(" ");
+// }
+//
+// sb.append("Node at ").append(xPos).append(", ").append(yPos);
+// sb.append(", ").append(size).append(":\n");
+//
+//// Print each point
+// for (Point p : points) {
+// for (int i = 0; i < (level + 1) * 2; i++) {
+// sb.append(" ");
+// }
+// sb.append("(").append(p.getName()).append(", ");
+// sb.append(p.getX()).append(", ").append(p.getY()).append(
+// ")\n");
+// }
+// }
+
+
+    @Override
     public boolean isEmpty() {
         return points.isEmpty();
     }

@@ -15,8 +15,9 @@ import student.TestableRandom;
  * @param <V>
  *            Value
  */
-public class SkipList<K extends Comparable<? super K>, V>
+public class SkipList<K extends Comparable<K>, V>
     implements Iterable<KVPair<K, V>> {
+
     private SkipNode head; // First element (Sentinel Node)
 
     private int size; // number of entries in the Skip List
@@ -80,8 +81,8 @@ public class SkipList<K extends Comparable<? super K>, V>
         // Move to the first node of level 1
         current = current.forward[1];
 
-        while (current != null && current.element() != null && current.element()
-            .getKey().compareTo(key) == 0) {
+        while (current != null && current.element() != null && current
+            .element().getKey().compareTo(key) == 0) {
             result.add(current.element());
             current = current.forward[1];
         }
@@ -144,7 +145,7 @@ public class SkipList<K extends Comparable<? super K>, V>
         }
 
         size++;
-        System.out.println("Rectangle inserted: " + newNode.pair.toString());
+        // System.out.println("Point inserted: " + newNode.pair.toString());
     }
 
 
@@ -243,13 +244,13 @@ public class SkipList<K extends Comparable<? super K>, V>
     public void dump() {
         System.out.println("SkipList dump:");
         if (size == 0) {
-            System.out.println("Node with depth 1, value null");
+            System.out.println("Node has depth 1, value null");
             System.out.println("SkipList size is: 0");
             return;
         }
 
         // Print the highest level null node if it exists
-        System.out.println("Node with depth " + head.level + ", value null");
+        System.out.println("Node has depth " + head.level + ", value null");
 
         // Collect all nodes and their maximum depths
         MyArrayList<SkipNode> allNodes = new MyArrayList<>();
@@ -295,7 +296,7 @@ public class SkipList<K extends Comparable<? super K>, V>
 
         // Print nodes in lexicographical order
         for (int i = 0; i < allNodes.size(); i++) {
-            System.out.println("Node with depth " + nodeDepths[i] + ", value "
+            System.out.println("Node has depth " + nodeDepths[i] + ", value "
                 + allNodes.get(i).element().toString());
         }
 

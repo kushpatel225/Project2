@@ -31,9 +31,12 @@ public class PointsProject {
             return;
         }
 
-// Database myWorld = new Database();
+        // Create an instance of Database
+        Database myWorld = new Database();
 
-// CommandProcessor processor = new CommandProcessor(myWorld);
-// processor.readCmdFile(theFile);
+        // Create an instance of CommandProcessor and process the file
+        CommandProcessor processor = new CommandProcessor(myWorld);
+        processor.readCmdFile(theFile);
     }
+
 }

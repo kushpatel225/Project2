@@ -9,26 +9,58 @@ import student.TestableRandom;
  * @version {Put Something Here}
  */
 public class ProblemSpecTest extends TestCase {
+
     /**
-     * Sets up the tests that follow. In general, used for initialization
+     * Sets up the tests that follow. Clears the output before each test.
      */
     public void setUp() {
-        // Nothing here
+        systemOut().clearHistory();
     }
 
 
     /**
-     * Read contents of a file into a string
+     * Reads the contents of a file into a string.
      * 
      * @param path
-     *            File name
-     * @return the string
+     *            the file name to read from
+     * @return the string representation of the file contents
      * @throws IOException
+     *             if an I/O error occurs
      */
     static String readFile(String path) throws IOException {
         byte[] encoded = Files.readAllBytes(Paths.get(path));
         return new String(encoded);
     }
+
+    /**
+     * Tests the posted sample case 2 by comparing the actual output with the
+     * expected output.
+     * 
+     * @throws IOException
+     *             if an error occurs while reading the file
+     */
+// public void testSyntaxTest1() throws IOException {
+// String[] args = { "SyntaxTest1.txt" };
+// PointsProject.main(args);
+// String output = systemOut().getHistory();
+// String referenceOutput = readFile("SyntaxTest1Out.txt");
+// assertFuzzyEquals(referenceOutput, output);
+// }
+
+    /**
+     * Tests the posted syntax sample by comparing the actual output with the
+     * expected output.
+     *
+     * @throws IOException
+     *             if an error occurs while reading the file
+     */
+// public void testSyntaxTest2() throws IOException {
+// String[] args = { "SyntaxTest2.txt" };
+// PointsProject.main(args);
+// String output = systemOut().getHistory();
+// String referenceOutput = readFile("SyntaxTest2Out.txt");
+// assertFuzzyEquals(referenceOutput, output);
+// }
 
 
     /**

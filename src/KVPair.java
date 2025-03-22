@@ -8,9 +8,9 @@
  * @author CS Staff
  * @version 2025spring
  */
-public class KVPair<K extends Comparable<K>, E> 
+public class KVPair<K extends Comparable<K>, E>
     implements Comparable<KVPair<K, E>> {
-    
+
     private K theKey; // The key
     private E theVal; // The value
 
@@ -79,6 +79,27 @@ public class KVPair<K extends Comparable<K>, E>
      */
 
     public String toString() {
-        return theKey.toString() + ", " + theVal.toString();
+        return theVal.toString();
+// return theKey.toString() + ", " + theVal.toString();
+    }
+
+
+    /**
+     * Returns the key of this KVPair
+     *
+     * @return the key of the KVPair
+     */
+    public K getKey() {
+        return theKey;
+    }
+
+
+    /**
+     * Returns the value of this KVPair
+     *
+     * @return the value that the KVPair holds
+     */
+    public E getValue() {
+        return theVal;
     }
 }

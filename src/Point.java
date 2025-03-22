@@ -1,8 +1,6 @@
-
 public class Point {
     private String name;
-    private int x;
-    private int y;
+    private int x, y;
 
     public Point(String name, int x, int y) {
         this.name = name;
@@ -16,13 +14,18 @@ public class Point {
     }
 
 
-    public int getXCoor() {
+    public int getX() {
         return x;
     }
 
 
-    public int getYCoor() {
+    public int getY() {
         return y;
+    }
+
+
+    public String toString() {
+        return "(" + name + ", " + x + ", " + y + ")";
     }
 
 
@@ -42,10 +45,5 @@ public class Point {
             }
         }
         return false;
-    }
-
-
-    public String toString() {
-        return "(" + name + ", " + x + ", " + y + ")";
     }
 }
