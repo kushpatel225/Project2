@@ -151,4 +151,14 @@ public class Database {
         skipList.dump(); // Dump the SkipList
         quadtree.dump(); // Dump the PR Quadtree
     }
+
+
+    public PRQuadtree getQuadTree() {
+        return quadtree;
+    }
+
+
+    public SkipList<String, Point> getSkipList() {
+        return skipList;
+    }
 }

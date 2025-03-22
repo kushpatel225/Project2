@@ -17,19 +17,25 @@ public class CommandProcessor {
         data = new Database();
     }
 
+
     /**
      * Constructor that allows a custom database instance to be passed
-     * @param dataIn The database object to manipulate
+     * 
+     * @param dataIn
+     *            The database object to manipulate
      */
     public CommandProcessor(Database dataIn) {
         data = dataIn != null ? dataIn : new Database();
     }
 
+
     /**
      * Reads the command file and processes each line.
      * 
-     * @param commandFile The file containing the commands to be processed.
-     * @throws FileNotFoundException If the file doesn't exist.
+     * @param commandFile
+     *            The file containing the commands to be processed.
+     * @throws FileNotFoundException
+     *             If the file doesn't exist.
      */
     public void readCmdFile(File commandFile) throws FileNotFoundException {
         Scanner scanner = new Scanner(commandFile);
@@ -46,12 +52,14 @@ public class CommandProcessor {
         scanner.close();
     }
 
+
     /**
      * Processes a single command line from the file.
      * 
-     * @param line A single command line to be processed.
+     * @param line
+     *            A single command line to be processed.
      */
-    private void processCommand(String line) {
+    public void processCommand(String line) {
         String[] parts = line.split("\\s+");
         String command = parts[0];
 
@@ -60,30 +68,38 @@ public class CommandProcessor {
             int x = Integer.parseInt(parts[2]);
             int y = Integer.parseInt(parts[3]);
             data.insert(name, x, y);
-        } else if (command.equals("remove") && parts.length == 2) {
+        }
+        else if (command.equals("remove") && parts.length == 2) {
             String name = parts[1];
             data.remove(name);
-        } else if (command.equals("remove") && parts.length == 3) {
+        }
+        else if (command.equals("remove") && parts.length == 3) {
             int x = Integer.parseInt(parts[1]);
             int y = Integer.parseInt(parts[2]);
             data.remove(x, y);
-        } else if (command.equals("regionsearch") && parts.length == 5) {
+        }
+        else if (command.equals("regionsearch") && parts.length == 5) {
             int x = Integer.parseInt(parts[1]);
             int y = Integer.parseInt(parts[2]);
             int w = Integer.parseInt(parts[3]);
             int h = Integer.parseInt(parts[4]);
             data.regionsearch(x, y, w, h);
-        } else if (command.equals("duplicates")) {
+        }
+        else if (command.equals("duplicates")) {
             data.duplicates();
-        } else if (command.equals("search") && parts.length == 2) {
+        }
+        else if (command.equals("search") && parts.length == 2) {
             String name = parts[1];
             data.search(name);
-        } else if (command.equals("dump")) {
+        }
+        else if (command.equals("dump")) {
             data.dump();
-        } else {
+        }
+        else {
             System.out.println("Unrecognized command: " + line);
         }
     }
+
 
     /**
      * Retrieves the currently stored database object.

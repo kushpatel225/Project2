@@ -151,14 +151,5 @@ public class ArrayList {
             return elements[currentIndex++];
         }
 
-
-        @Override
-        public void remove() {
-            if (currentIndex == 0 || currentIndex > size) {
-                throw new IllegalStateException();
-            }
-            ArrayList.this.remove(elements[currentIndex - 1]);
-            currentIndex--;
-        }
     }
 }

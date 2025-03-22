@@ -1,3 +1,5 @@
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import student.TestCase;
 
 public class ArrayListTest extends TestCase {
@@ -36,6 +38,29 @@ public class ArrayListTest extends TestCase {
         list.add(pt11);
         assertEquals(11, list.size());
 
+    }
+
+
+    public void testAddAll() {
+        ArrayList nullList = null;
+        list.addAll(nullList);
+        assertEquals(1, list.size());
+        ArrayList otherList = new ArrayList();
+        list.addAll(otherList);
+        assertEquals(1, list.size());
+        Point pt2 = new Point("Apple", 200, 500);
+        otherList.add(pt2);
+        Point pt3 = new Point("Apple", 200, 500);
+        otherList.add(pt3);
+        Point pt4 = new Point("Apple", 200, 500);
+        otherList.add(pt4);
+        Point pt5 = new Point("Apple", 200, 500);
+        otherList.add(pt5);
+        Point pt6 = new Point("Apple", 200, 500);
+        otherList.add(pt6);
+
+        list.addAll(otherList);
+        assertEquals(6, list.size());
     }
 
 
@@ -94,5 +119,25 @@ public class ArrayListTest extends TestCase {
         String expected2 =
             "(Apple, 200, 500), (Apple, 300, 500), (Apple, 400, 500)";
         assertEquals(expected2, list.toString());
+    }
+
+
+    public void testIterator() {
+        Iterator iterator = list.iterator();
+        assertTrue(iterator.hasNext());
+        Point pt2 = new Point("Apple", 200, 500);
+        list.add(pt2);
+        Point pt3 = new Point("Apple", 200, 500);
+        list.add(pt3);
+        assertEquals(pt2, iterator.next());
+        iterator.next();
+        iterator.next();
+        try {
+            iterator.next();
+        }
+        catch (Exception error) {
+            assertTrue(error instanceof NoSuchElementException);
+        }
+
     }
 }
