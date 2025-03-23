@@ -75,7 +75,7 @@ public class EmptyNode implements QuadNode {
      * Checks if node intersects a region
      */
     @Override
-    public void regionSearch(
+    public int regionSearch(
         int x,
         int y,
         int w,
@@ -84,11 +84,14 @@ public class EmptyNode implements QuadNode {
         int yPos,
         int size,
         ArrayList results) {
+        int nodes = 0;
         // Only count if this node intersects with the search region
         if (intersects(x, y, w, h, xPos, yPos, size)) {
-            PRQuadtree.nodesVisited++; // May not work b/c its static
+            nodes++;
+            // PRQuadtree.nodesVisited++; // May not work b/c its static
         }
         // Empty node, nothing to search
+        return nodes;
     }
 
 

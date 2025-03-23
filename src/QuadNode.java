@@ -85,7 +85,7 @@ public interface QuadNode {
      * @param results
      *            the list to add found points to
      */
-    public void regionSearch(
+    public int regionSearch(
         int x,
         int y,
         int w,
@@ -128,6 +128,8 @@ public interface QuadNode {
      *            the y-position of the current quadrant
      * @param size
      *            the size of the current quadrant
+     * @param nodesPrinted
+     *            the number of nodes printed
      */
     public void dump(
         int level,

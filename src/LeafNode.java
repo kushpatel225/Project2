@@ -10,7 +10,6 @@ public class LeafNode implements QuadNode {
      * List of points in node
      */
     private ArrayList points;
-    private PRQuadtree tree;
 
     /**
      * Constructor to create a new leaf node
@@ -164,7 +163,7 @@ public class LeafNode implements QuadNode {
      * Checks for points within a region
      */
     @Override
-    public void regionSearch(
+    public int regionSearch(
         int x,
         int y,
         int w,
@@ -173,11 +172,12 @@ public class LeafNode implements QuadNode {
         int yPos,
         int size,
         ArrayList results) {
+        int nodes = 0;
         // Only count if this node intersects with the search region
         if (intersects(x, y, w, h, xPos, yPos, size)) {
             // Increment nodes visited count
-            PRQuadtree.nodesVisited++;
-
+            // PRQuadtree.nodesVisited++;
+            nodes++;
             // Check each point to see if it falls within the search region
             for (int i = 0; i < points.size(); i++) {
                 int px = points.get(i).getX();
@@ -188,6 +188,7 @@ public class LeafNode implements QuadNode {
                 }
             }
         }
+        return nodes;
     }
 
 

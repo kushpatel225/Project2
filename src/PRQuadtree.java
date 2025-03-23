@@ -21,10 +21,7 @@ public class PRQuadtree {
     // The size of the world
     private final int worldSize = 1024;
     // Counter for nodes visited during region search
-    /**
-     * Counts the number of nodes visited
-     */
-    public static int nodesVisited = 0;
+    private int nodesVisited;
 
     /**
      * Constructor to create a new PRQuadtree
@@ -34,6 +31,7 @@ public class PRQuadtree {
         emptyNode = EmptyNode.getInstance();
         // Initialize the root as an empty leaf node
         root = emptyNode;
+        nodesVisited = 0;
 
     }
 
@@ -129,7 +127,7 @@ public class PRQuadtree {
         }
 
         // Search the tree
-        root.regionSearch(x, y, w, h, 0, 0, worldSize, results);
+        nodesVisited += root.regionSearch(x, y, w, h, 0, 0, worldSize, results);
 
         // Print the number of nodes visited
         // System.out.println(nodesVisited + " quadtree nodes visited");

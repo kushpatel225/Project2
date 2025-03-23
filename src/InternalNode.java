@@ -270,7 +270,7 @@ public class InternalNode implements QuadNode {
      * Searches for points within a region
      */
     @Override
-    public void regionSearch(
+    public int regionSearch(
         int x,
         int y,
         int w,
@@ -279,18 +279,21 @@ public class InternalNode implements QuadNode {
         int yPos,
         int size,
         ArrayList results) {
+        int nodes = 0;
         // Only count a node as visited if it intersects the search region
         if (intersects(x, y, w, h, xPos, yPos, size)) {
             // Increment nodes visited count
-            PRQuadtree.nodesVisited++;
+            nodes++;
+            // PRQuadtree.nodesVisited++;
 
             // Search all child quadrants
             for (int i = 0; i < 4; i++) {
                 int[] quadPos = getQuadrantPosition(i, xPos, yPos, size);
-                children[i].regionSearch(x, y, w, h, quadPos[0], quadPos[1],
-                    quadPos[2], results);
+                nodes += children[i].regionSearch(x, y, w, h, quadPos[0],
+                    quadPos[1], quadPos[2], results);
             }
         }
+        return nodes;
     }
 // @Override
 // public void regionSearch(
