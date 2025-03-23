@@ -8,8 +8,6 @@ import java.util.NoSuchElementException;
  * 
  * @author Rushil, Kush
  * @version 1.0
- * @param <E>
- *            the type of elements in this list
  */
 public class ArrayList {
 
@@ -29,8 +27,6 @@ public class ArrayList {
     /**
      * Appends the specified element to the end of this list.
      *
-     * @param e
-     *            element to be appended to this list
      */
     public void add(Point pt) {
         ensureCapacity(size + 1);
@@ -38,6 +34,12 @@ public class ArrayList {
     }
 
 
+    /**
+     * Appends all elements of another list to this list
+     * 
+     * @param otherList
+     *            list of elements being added
+     */
     public void addAll(ArrayList otherList) {
         if (otherList == null || otherList.size == 0) {
             return;
@@ -48,6 +50,13 @@ public class ArrayList {
     }
 
 
+    /**
+     * Removes a specific point from the list
+     * 
+     * @param pt
+     *            the point to remove
+     * @return the removed point
+     */
     public Point remove(Point pt) {
         int index = search(pt);
         if (index == -1) {
@@ -63,6 +72,13 @@ public class ArrayList {
     }
 
 
+    /**
+     * Searches for a specific point
+     * 
+     * @param pt
+     *            the point to search for
+     * @return index of point or -1 if not found
+     */
     private int search(Point pt) {
         for (int i = 0; i < size; i++) {
             if (elements[i].equals(pt)) {
@@ -73,6 +89,13 @@ public class ArrayList {
     }
 
 
+    /**
+     * Returns the point at a specific index
+     * 
+     * @param index
+     *            the index to search at
+     * @return the point at index or throws exception
+     */
     public Point get(int index) {
         if (index > size || index < 0) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: "
@@ -118,6 +141,11 @@ public class ArrayList {
     }
 
 
+    /**
+     * Outputs the values in the list
+     * 
+     * @return to string of values
+     */
     public String toString() {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < size; i++) {
@@ -130,19 +158,33 @@ public class ArrayList {
     }
 
 
-    public Iterator iterator() {
+    /**
+     * Creates the iterator object
+     * 
+     * @return the iterator object
+     */
+    public Iterator<Object> iterator() {
         return new ArrayListIterator();
     }
 
-    private class ArrayListIterator implements Iterator {
+    /**
+     * Class for the iterator
+     */
+    private class ArrayListIterator implements Iterator<Object> {
         private int currentIndex = 0;
 
+        /**
+         * Checks if iterator has a next elements
+         */
         @Override
         public boolean hasNext() {
             return currentIndex < size;
         }
 
 
+        /**
+         * Returns the next elements in the list
+         */
         @Override
         public Point next() {
             if (!hasNext()) {

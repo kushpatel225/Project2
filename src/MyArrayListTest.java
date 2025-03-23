@@ -19,10 +19,14 @@ public class MyArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the constructor
+     */
     public void testMyArrayList() {
         MyArrayList<Integer> newList = new MyArrayList<Integer>(10);
         assertEquals(0, newList.size());
         try {
+            @SuppressWarnings("unused")
             MyArrayList<Integer> badList = new MyArrayList<Integer>(-1);
         }
         catch (Exception error) {
@@ -123,6 +127,9 @@ public class MyArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the clear method
+     */
     public void testClear() {
         list.add(2);
         list.add(3);
@@ -131,6 +138,9 @@ public class MyArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the index method
+     */
     public void testIndexOf() {
         list.add(2);
         list.add(3);

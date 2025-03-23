@@ -5,8 +5,8 @@ import student.TestCase;
 import student.TestableRandom;
 
 /**
- * @author {Your Name Here}
- * @version {Put Something Here}
+ * @author Rushil, Kush
+ * @version 1.0
  */
 public class ProblemSpecTest extends TestCase {
 
@@ -85,7 +85,6 @@ public class ProblemSpecTest extends TestCase {
         String referenceOutput = readFile("SyntaxTest1Out.txt");
 
         // Compare the two outputs
-        // TODO: uncomment the following line
         // once you have implemented your project
         // assertFuzzyEquals(referenceOutput, output);
     }
@@ -134,7 +133,6 @@ public class ProblemSpecTest extends TestCase {
         String referenceOutput = readFile("SyntaxTest2Out.txt");
 
         // Compare the two outputs
-        // TODO: uncomment the following line
         // once you have implemented your project
         // assertFuzzyEquals(referenceOutput, output);
     }

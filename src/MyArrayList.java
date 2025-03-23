@@ -1,12 +1,11 @@
 
-
 import java.util.Arrays;
 
 /**
  * A simplified ArrayList implementation that supports basic operations
  * needed for the SkipList.
  * 
- * @author Rushil
+ * @author Rushil, Kush
  * @version 1.0
  * @param <E>
  *            the type of elements in this list

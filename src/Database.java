@@ -1,9 +1,18 @@
 import java.util.Iterator;
 
+/**
+ * The database class sets up the commands to set to either QuadTree or SkipList
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public class Database {
     private SkipList<String, Point> skipList;
     private PRQuadtree quadtree;
 
+    /**
+     * The constructor for database
+     */
     public Database() {
         skipList = new SkipList<>();
         quadtree = new PRQuadtree();
@@ -27,6 +36,16 @@ public class Database {
     }
 
 
+    /**
+     * Inserts the point into quadtree and skiplist
+     * 
+     * @param name
+     *            the name of point
+     * @param x
+     *            the x coordinate of point
+     * @param y
+     *            the y coordinate of point
+     */
     // Insert point into both SkipList and PRQuadtree
     public void insert(String name, int x, int y) {
         if (x < 0 || y < 0 || x >= 1024 || y >= 1024) {
@@ -39,16 +58,20 @@ public class Database {
         }
         Point point = new Point(name, x, y);
         KVPair<String, Point> pair = new KVPair<String, Point>(name, point);
-        skipList.insert(pair); // Insert into
-                               // the SkipList
-        quadtree.insert(point.getX(), point.getY(), point.getName()); // Insert
-                                                                      // into
-                                                                      // the PR
-                                                                      // Quadtree
+        // Insert into skipList
+        skipList.insert(pair);
+        // Insert into quadTree
+        quadtree.insert(point.getX(), point.getY(), point.getName());
         System.out.println("Point inserted: " + point.toString());
     }
 
 
+    /**
+     * Removes a point based on name
+     * 
+     * @param name
+     *            the name of point to be removed
+     */
     // Remove point by name
     public void remove(String name) {
         if (!isValidName(name)) {
@@ -67,6 +90,14 @@ public class Database {
     }
 
 
+    /**
+     * Removes a point based on coordinates
+     * 
+     * @param x
+     *            the x coordinate of point to be removed
+     * @param y
+     *            the y coordinate of point to be removed
+     */
     // Remove point by coordinates
     public void remove(int x, int y) {
         if (x < 0 || y < 0 || x >= 1024 || y >= 1024) {
@@ -91,6 +122,18 @@ public class Database {
     }
 
 
+    /**
+     * Checks for points within a specific region
+     * 
+     * @param x
+     *            the x coordinate to search from
+     * @param y
+     *            the y coordinate to search from
+     * @param w
+     *            the width of search area
+     * @param h
+     *            the height of search area
+     */
     // Region search, duplicates, and search methods...
     public void regionsearch(int x, int y, int w, int h) {
         if (w <= 0 || h <= 0) {
@@ -102,7 +145,7 @@ public class Database {
         ArrayList intersectingRegion = quadtree.regionSearch(x, y, w, h);
         System.out.println("Points intersecting region " + "(" + x + ", " + y
             + ", " + w + ", " + h + ")");
-        for (Iterator iterator = intersectingRegion.iterator(); iterator
+        for (Iterator<Object> iterator = intersectingRegion.iterator(); iterator
             .hasNext();) {
             Point point = (Point)iterator.next();
             System.out.println("Point found: " + point.toString());
@@ -112,10 +155,13 @@ public class Database {
     }
 
 
+    /**
+     * Prints the duplicates within the quadtree
+     */
     public void duplicates() {
         java.util.HashMap<String, ArrayList> dups = quadtree.findDuplicates();
         System.out.println("Duplicate points:");
-        for (Iterator iterator = dups.keySet().iterator(); iterator
+        for (Iterator<String> iterator = dups.keySet().iterator(); iterator
             .hasNext();) {
             String s = (String)iterator.next();
             System.out.println("(" + s + ")");
@@ -147,17 +193,30 @@ public class Database {
     }
 
 
+    /**
+     * Prints out the aspects of quadtree and skiplist
+     */
     public void dump() {
         skipList.dump(); // Dump the SkipList
         quadtree.dump(); // Dump the PR Quadtree
     }
 
 
+    /**
+     * Gets the quadtree instance
+     * 
+     * @return quadtree instance
+     */
     public PRQuadtree getQuadTree() {
         return quadtree;
     }
 
 
+    /**
+     * Gets the skiplist instance
+     * 
+     * @return skiplist instance
+     */
     public SkipList<String, Point> getSkipList() {
         return skipList;
     }

@@ -2,11 +2,20 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import student.TestCase;
 
+/**
+ * The test class for arrayList
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public class ArrayListTest extends TestCase {
 
     private ArrayList list;
     private Point pt;
 
+    /**
+     * Sets up variables for use in class
+     */
     public void setUp() {
         list = new ArrayList();
         pt = new Point("Apple", 200, 500);
@@ -14,6 +23,9 @@ public class ArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the add method
+     */
     public void testAdd() {
         assertEquals(1, list.size());
         Point pt2 = new Point("Apple", 200, 500);
@@ -41,6 +53,9 @@ public class ArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the add all method
+     */
     public void testAddAll() {
         ArrayList nullList = null;
         list.addAll(nullList);
@@ -64,6 +79,9 @@ public class ArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the remove method
+     */
     public void testRemove() {
         list.remove(pt);
         assertEquals(0, list.size());
@@ -85,6 +103,9 @@ public class ArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the get method
+     */
     public void testGet() {
         assertTrue(list.get(0).equals(pt));
         try {
@@ -102,6 +123,9 @@ public class ArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the isEmpty method
+     */
     public void testIsEmpty() {
         assertFalse(list.isEmpty());
         list.remove(pt);
@@ -109,6 +133,9 @@ public class ArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the toString method
+     */
     public void testToString() {
         String expected = "(Apple, 200, 500)";
         assertEquals(expected, list.toString());
@@ -122,8 +149,11 @@ public class ArrayListTest extends TestCase {
     }
 
 
+    /**
+     * Tests the all iterator methods
+     */
     public void testIterator() {
-        Iterator iterator = list.iterator();
+        Iterator<Object> iterator = list.iterator();
         assertTrue(iterator.hasNext());
         Point pt2 = new Point("Apple", 200, 500);
         list.add(pt2);

@@ -9,26 +9,31 @@
  * must be a leaf node.
  * 3. Any node with more than 3 points must be an internal node (unless #2
  * applies).
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
  */
 public class PRQuadtree {
     // The root of the PRQuadtree
     private QuadNode root;
     // The flyweight object representing empty leaf nodes
-    private final QuadNode EMPTY_NODE;
+    private final QuadNode emptyNode;
     // The size of the world
-    private final int WORLD_SIZE = 1024;
+    private final int worldSize = 1024;
     // Counter for nodes visited during region search
-    public static int nodesVisited;
+    /**
+     * Counts the number of nodes visited
+     */
+    public static int nodesVisited = 0;
 
     /**
      * Constructor to create a new PRQuadtree
      */
     public PRQuadtree() {
         // Create the flyweight empty leaf node
-        EMPTY_NODE = EmptyNode.getInstance();
+        emptyNode = EmptyNode.getInstance();
         // Initialize the root as an empty leaf node
-        root = EMPTY_NODE;
-        nodesVisited = 0;
+        root = emptyNode;
 
     }
 
@@ -46,12 +51,12 @@ public class PRQuadtree {
      */
     public boolean insert(int x, int y, String name) {
         // Check if point is within the world boundaries
-        if (x < 0 || y < 0 || x >= WORLD_SIZE || y >= WORLD_SIZE) {
+        if (x < 0 || y < 0 || x >= worldSize || y >= worldSize) {
             return false;
         }
 
         // Insert the point into the tree
-        root = root.insert(x, y, name, 0, 0, WORLD_SIZE);
+        root = root.insert(x, y, name, 0, 0, worldSize);
         return true;
     }
 
@@ -67,12 +72,12 @@ public class PRQuadtree {
      */
     public Point remove(int x, int y) {
         // Check if point is within the world boundaries
-        if (x < 0 || y < 0 || x >= WORLD_SIZE || y >= WORLD_SIZE) {
+        if (x < 0 || y < 0 || x >= worldSize || y >= worldSize) {
             return null;
         }
 
         // Remove the point from the tree
-        RemoveResult result = root.remove(x, y, 0, 0, WORLD_SIZE);
+        RemoveResult result = root.remove(x, y, 0, 0, worldSize);
         root = result.getNode();
 
         return result.getRemovedPoint();
@@ -88,24 +93,10 @@ public class PRQuadtree {
      */
     public Point removeByName(String name) {
         // Remove the point from the tree
-        RemoveResult result = root.removeByName(name, 0, 0, WORLD_SIZE);
+        RemoveResult result = root.removeByName(name, 0, 0, worldSize);
         root = result.getNode();
 
         return result.getRemovedPoint();
-    }
-
-
-    private boolean intersects(
-        int x,
-        int y,
-        int w,
-        int h,
-        int qx,
-        int qy,
-        int qsize) {
-        // Check if the quadrant is completely outside the search region
-        return !(qx >= x + w || qx + qsize <= x || qy >= y + h || qy
-            + qsize <= y);
     }
 
 
@@ -138,7 +129,7 @@ public class PRQuadtree {
         }
 
         // Search the tree
-        root.regionSearch(x, y, w, h, 0, 0, WORLD_SIZE, results);
+        root.regionSearch(x, y, w, h, 0, 0, worldSize, results);
 
         // Print the number of nodes visited
         // System.out.println(nodesVisited + " quadtree nodes visited");
@@ -183,7 +174,7 @@ public class PRQuadtree {
         java.util.HashMap<String, ArrayList> dups = new java.util.HashMap<>();
 
         // Find duplicates in the tree
-        root.findDuplicates(dups, 0, 0, WORLD_SIZE);
+        root.findDuplicates(dups, 0, 0, worldSize);
 
         return dups;
     }
@@ -204,7 +195,7 @@ public class PRQuadtree {
         nodesPrinted[0] = 0;
 
         // Dump the tree
-        root.dump(0, sb, 0, 0, WORLD_SIZE, nodesPrinted);
+        root.dump(0, sb, 0, 0, worldSize, nodesPrinted);
 
         // Add the count of nodes at the end
         sb.append(nodesPrinted[0]).append(" quadtree nodes printed");

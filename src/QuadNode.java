@@ -1,4 +1,9 @@
-
+/**
+ * The interface used by emptyNode, internalNode, and leafNode
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public interface QuadNode {
     /**
      * Insert a point into the quadtree

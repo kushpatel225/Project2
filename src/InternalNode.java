@@ -1,4 +1,9 @@
-
+/**
+ * Internal node of quadtree
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public class InternalNode implements QuadNode {
     // The four children of this node (NW, NE, SW, SE)
     private QuadNode[] children;
@@ -99,6 +104,9 @@ public class InternalNode implements QuadNode {
     }
 
 
+    /**
+     * Insert for internal node
+     */
     @Override
     public QuadNode insert(
         int x,
@@ -119,6 +127,9 @@ public class InternalNode implements QuadNode {
     }
 
 
+    /**
+     * Removes point based on point values
+     */
     @Override
     public RemoveResult remove(int x, int y, int xPos, int yPos, int size) {
         // Find the appropriate quadrant
@@ -141,6 +152,9 @@ public class InternalNode implements QuadNode {
     }
 
 
+    /**
+     * Removes a point based on name
+     */
     @Override
     public RemoveResult removeByName(
         String name,
@@ -178,7 +192,7 @@ public class InternalNode implements QuadNode {
      * 
      * @return true if the nodes should be merged
      */
-    private boolean shouldMerge() {
+    boolean shouldMerge() {
         ArrayList allPoints = new ArrayList();
 
         // Count total non-empty leaf nodes and collect all points
@@ -238,13 +252,13 @@ public class InternalNode implements QuadNode {
             if (children[i] instanceof LeafNode) {
                 LeafNode leaf = (LeafNode)children[i];
                 for (int j = 0; j < leaf.getPoints().size(); j++) {
-                    mergedNode.addPoint(leaf.getPoints().get(i));
+                    mergedNode.addPoint(leaf.getPoints().get(j));
                 }
             }
         }
 
         // If no points, return empty node
-        if (mergedNode.points.isEmpty()) {
+        if (mergedNode.getPoints().isEmpty()) {
             return EmptyNode.getInstance();
         }
 
@@ -252,6 +266,9 @@ public class InternalNode implements QuadNode {
     }
 
 
+    /**
+     * Searches for points within a region
+     */
     @Override
     public void regionSearch(
         int x,
@@ -347,6 +364,9 @@ public class InternalNode implements QuadNode {
 // }
 
 
+    /**
+     * Finds the duplicate points in the node
+     */
     @Override
     public void findDuplicates(
         java.util.HashMap<String, ArrayList> dups,
@@ -362,6 +382,9 @@ public class InternalNode implements QuadNode {
     }
 
 
+    /**
+     * The dump of internal node
+     */
     @Override
     public void dump(
         int level,
@@ -382,7 +405,6 @@ public class InternalNode implements QuadNode {
         sb.append(", ").append(size).append(": Internal\n");
 
         // Dump each child
-        String[] quadrantNames = { "NW", "NE", "SW", "SE" };
         for (int i = 0; i < 4; i++) {
             // Dump the child
             int[] quadPos = getQuadrantPosition(i, xPos, yPos, size);
@@ -423,6 +445,9 @@ public class InternalNode implements QuadNode {
 // }
 
 
+    /**
+     * Checks if the node is empty
+     */
     @Override
     public boolean isEmpty() {
         // An internal node is never empty

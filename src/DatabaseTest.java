@@ -1,11 +1,20 @@
 import student.TestCase;
 
+/**
+ * The test class for database
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public class DatabaseTest extends TestCase {
 
     private Database db;
     private PRQuadtree tree;
-    private SkipList list;
+    private SkipList<String, Point> list;
 
+    /**
+     * Sets up variables for the class
+     */
     public void setUp() {
         db = new Database();
         tree = db.getQuadTree();
@@ -14,6 +23,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Checks if names are valid
+     */
     public void testIsValidName() {
         db.insert("1app", 100, 100);
         assertEquals(0, db.getSkipList().size());
@@ -24,6 +36,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the insert method
+     */
     public void testInsert() {
         db.insert("apple", 10000, 10000);
         assertEquals(0, db.getSkipList().size());
@@ -38,6 +53,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the remove by name method
+     */
     public void testRemoveName() {
         db.remove("apple");
         assertEquals(0, db.getSkipList().size());
@@ -49,6 +67,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the remove by coordinate method
+     */
     public void testRemoveCoor() {
         db.remove(10000, 10000);
         assertEquals(0, db.getSkipList().size());
@@ -70,6 +91,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the regionSearch method
+     */
     public void testRegionSearch() {
         db.regionsearch(0, 0, -1, -1);
         assertEquals(0, db.getSkipList().size());
@@ -87,6 +111,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the duplicates method
+     */
     public void testDuplicates() {
         db.duplicates();
         db.insert("apple", 100, 100);
@@ -97,6 +124,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the search method
+     */
     public void testSearch() {
         db.search("apple");
         assertEquals(0, db.getSkipList().size());
@@ -108,6 +138,9 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the dump method
+     */
     public void testDump() {
         db.dump();
         assertEquals(0, db.getSkipList().size());
@@ -118,11 +151,17 @@ public class DatabaseTest extends TestCase {
     }
 
 
+    /**
+     * Tests the getQuadtree method
+     */
     public void testGetQuadtree() {
         assertEquals(tree, db.getQuadTree());
     }
 
 
+    /**
+     * Tests the getSkiplist method
+     */
     public void testGetSkipList() {
         assertEquals(list, db.getSkipList());
     }

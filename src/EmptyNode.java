@@ -1,13 +1,26 @@
-
+/**
+ * The empty node class of the quadtree
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public class EmptyNode implements QuadNode {
 
     private static EmptyNode flyweight = null;
 
+    /**
+     * Constructor for emptynode
+     */
     private EmptyNode() {
 
     }
 
 
+    /**
+     * Gets an instance of emptyNode
+     * 
+     * @return the instance of emptyNode
+     */
     public static EmptyNode getInstance() {
         if (flyweight == null) {
             flyweight = new EmptyNode();
@@ -16,6 +29,9 @@ public class EmptyNode implements QuadNode {
     }
 
 
+    /**
+     * Inserts a point
+     */
     @Override
     public QuadNode insert(
         int x,
@@ -31,6 +47,9 @@ public class EmptyNode implements QuadNode {
     }
 
 
+    /**
+     * Removes a point
+     */
     @Override
     public RemoveResult remove(int x, int y, int xPos, int yPos, int size) {
         // Empty node, nothing to remove
@@ -38,6 +57,9 @@ public class EmptyNode implements QuadNode {
     }
 
 
+    /**
+     * Removes a point by name
+     */
     @Override
     public RemoveResult removeByName(
         String name,
@@ -49,6 +71,9 @@ public class EmptyNode implements QuadNode {
     }
 
 
+    /**
+     * Checks if node intersects a region
+     */
     @Override
     public void regionSearch(
         int x,
@@ -67,6 +92,25 @@ public class EmptyNode implements QuadNode {
     }
 
 
+    /**
+     * Checks for points that intersect values
+     * 
+     * @param x
+     *            x coordinate of search area
+     * @param y
+     *            y coordinate of search area
+     * @param w
+     *            width of search area
+     * @param h
+     *            height of search area
+     * @param qx
+     *            nodes x value
+     * @param qy
+     *            nodes y value
+     * @param qsize
+     *            nodes size
+     * @return if they intersect
+     */
     private boolean intersects(
         int x,
         int y,
@@ -96,6 +140,9 @@ public class EmptyNode implements QuadNode {
 // }
 
 
+    /**
+     * Finds the duplicates in the node
+     */
     @Override
     public void findDuplicates(
         java.util.HashMap<String, ArrayList> dups,
@@ -106,6 +153,9 @@ public class EmptyNode implements QuadNode {
     }
 
 
+    /**
+     * Dump of empty node
+     */
     @Override
     public void dump(
         int level,
@@ -141,6 +191,9 @@ public class EmptyNode implements QuadNode {
 // }
 
 
+    /**
+     * Checks if node is empty
+     */
     @Override
     public boolean isEmpty() {
         return true;

@@ -1,7 +1,16 @@
-
+/**
+ * The LeafNode class of quadtree
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public class LeafNode implements QuadNode {
     // List to store the points in this leaf
-    ArrayList points;
+    /**
+     * List of points in node
+     */
+    private ArrayList points;
+    private PRQuadtree tree;
 
     /**
      * Constructor to create a new leaf node
@@ -11,6 +20,11 @@ public class LeafNode implements QuadNode {
     }
 
 
+    /**
+     * Gets the points in the node
+     * 
+     * @return points the elements in the node
+     */
     public ArrayList getPoints() {
         return points;
     }
@@ -27,6 +41,9 @@ public class LeafNode implements QuadNode {
     }
 
 
+    /**
+     * Inserts a point into the node
+     */
     @Override
     public QuadNode insert(
         int x,
@@ -83,6 +100,9 @@ public class LeafNode implements QuadNode {
     }
 
 
+    /**
+     * Removes a point based on coordinates
+     */
     @Override
     public RemoveResult remove(int x, int y, int xPos, int yPos, int size) {
         // Find a point with the given coordinates
@@ -108,6 +128,9 @@ public class LeafNode implements QuadNode {
     }
 
 
+    /**
+     * Removes a point based on name
+     */
     @Override
     public RemoveResult removeByName(
         String name,
@@ -137,6 +160,9 @@ public class LeafNode implements QuadNode {
     }
 
 
+    /**
+     * Checks for points within a region
+     */
     @Override
     public void regionSearch(
         int x,
@@ -150,7 +176,7 @@ public class LeafNode implements QuadNode {
         // Only count if this node intersects with the search region
         if (intersects(x, y, w, h, xPos, yPos, size)) {
             // Increment nodes visited count
-            PRQuadtree.nodesVisited++; // May not work since its static
+            PRQuadtree.nodesVisited++;
 
             // Check each point to see if it falls within the search region
             for (int i = 0; i < points.size(); i++) {
@@ -165,6 +191,25 @@ public class LeafNode implements QuadNode {
     }
 
 
+    /**
+     * Checks if a node intersects a region
+     * 
+     * @param x
+     *            the x coordinate of search area
+     * @param y
+     *            the y coordinate of search area
+     * @param w
+     *            the width of search area
+     * @param h
+     *            the height of search area
+     * @param qx
+     *            the x coordinate of node
+     * @param qy
+     *            the y coordinate of node
+     * @param qsize
+     *            the size of node
+     * @return if they intersect
+     */
     private boolean intersects(
         int x,
         int y,
@@ -202,6 +247,9 @@ public class LeafNode implements QuadNode {
 // }
 
 
+    /**
+     * Checks if there exists duplicates in node
+     */
     @Override
     public void findDuplicates(
         java.util.HashMap<String, ArrayList> dups,
@@ -230,6 +278,9 @@ public class LeafNode implements QuadNode {
     }
 
 
+    /**
+     * The dump for leafNode
+     */
     @Override
     public void dump(
         int level,
@@ -287,6 +338,9 @@ public class LeafNode implements QuadNode {
 // }
 
 
+    /**
+     * Checks if the node is empty
+     */
     @Override
     public boolean isEmpty() {
         return points.isEmpty();

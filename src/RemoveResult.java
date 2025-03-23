@@ -1,8 +1,11 @@
-
+/**
+ * Class to hold the result of a remove operation
+ * 
+ * @author Rushil, Kush
+ * @version 1.0
+ */
 public class RemoveResult {
-    /**
-     * Class to hold the result of a remove operation
-     */
+
     private QuadNode node;
     private Point removedPoint;
 
