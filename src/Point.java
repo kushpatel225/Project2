@@ -58,6 +58,8 @@ public class Point {
 
     /**
      * Converts the point into a string
+     * 
+     * @return the string equivalent of the object
      */
     public String toString() {
         return "(" + name + ", " + x + ", " + y + ")";
@@ -66,6 +68,10 @@ public class Point {
 
     /**
      * Checks if two objects are equal
+     * 
+     * @param obj
+     *            the object to compare
+     * @return if the objects are equals
      */
     public boolean equals(Object obj) {
         if (obj == null) {

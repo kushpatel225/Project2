@@ -84,6 +84,7 @@ public interface QuadNode {
      *            the size of the current quadrant
      * @param results
      *            the list to add found points to
+     * @return the number of nodes visited
      */
     public int regionSearch(
         int x,

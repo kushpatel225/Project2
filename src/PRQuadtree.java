@@ -180,8 +180,7 @@ public class PRQuadtree {
 
     /**
      * Dump the contents of the quadtree for display
-     * 
-     * @return a string representation of the quadtree
+     *
      */
     public void dump() {
         StringBuilder sb = new StringBuilder();

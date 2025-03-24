@@ -49,7 +49,8 @@ public class Database {
     // Insert point into both SkipList and PRQuadtree
     public void insert(String name, int x, int y) {
         if (x < 0 || y < 0 || x >= 1024 || y >= 1024) {
-            System.out.println("Point rejected: (" + x + ", " + y + ")");
+            System.out.println("Point rejected: (" + name + ", " + x + ", " + y
+                + ")");
             return;
         }
         if (!isValidName(name)) {
@@ -144,7 +145,7 @@ public class Database {
 
         ArrayList intersectingRegion = quadtree.regionSearch(x, y, w, h);
         System.out.println("Points intersecting region " + "(" + x + ", " + y
-            + ", " + w + ", " + h + ")");
+            + ", " + w + ", " + h + "):");
         for (Iterator<Object> iterator = intersectingRegion.iterator(); iterator
             .hasNext();) {
             Point point = (Point)iterator.next();

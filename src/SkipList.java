@@ -81,8 +81,8 @@ public class SkipList<K extends Comparable<K>, V>
         // Move to the first node of level 1
         current = current.forward[1];
 
-        while (current != null && current.element() != null && current
-            .element().getKey().compareTo(key) == 0) {
+        while (current != null && current.element() != null && current.element()
+            .getKey().compareTo(key) == 0) {
             result.add(current.element());
             current = current.forward[1];
         }
@@ -244,7 +244,7 @@ public class SkipList<K extends Comparable<K>, V>
     public void dump() {
         System.out.println("SkipList dump:");
         if (size == 0) {
-            System.out.println("Node has depth 1, value null");
+            System.out.println("Node has depth 1, Value (null)");
             System.out.println("SkipList size is: 0");
             return;
         }

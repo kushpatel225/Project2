@@ -26,6 +26,9 @@ public class ArrayList {
 
     /**
      * Appends the specified element to the end of this list.
+     * 
+     * @param pt
+     *            the point to be added
      *
      */
     public void add(Point pt) {
