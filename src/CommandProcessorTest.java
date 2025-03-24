@@ -39,7 +39,7 @@ public class CommandProcessorTest extends TestCase {
      * @throws FileNotFoundException
      */
     public void testFileRead() throws FileNotFoundException {
-        File inputFile = new File("SyntaxTest1.txt");
+        File inputFile = new File("SyntaxTest2.txt");
         processor.readCmdFile(inputFile);
     }
 

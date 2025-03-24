@@ -1,107 +1,159 @@
+
+import java.util.HashMap;
 import student.TestCase;
 
 /**
  * Test class for the InternalNode class.
  * 
+ * Follows Quadtree decomposition rules:
+ * 1. 1–3 points → leaf
+ * 2. >3 points at same (x,y) → still a leaf
+ * 3. >3 points at different (x,y) → internal
+ * 
  * @author Rushil, Kush
  * @version 1.0
  */
 public class InternalNodeTest extends TestCase {
-    /**
-     * Set up method to initialize resources before each test.
-     */
+    private InternalNode node;
 
+    /**
+     * Sets up the variables for use in class
+     */
     public void setUp() {
-
-        // Any setup logic needed before each test case (if required).
+        node = new InternalNode();
     }
 
 
     /**
-     * Tear down method to clean up resources after each test.
+     * Insert points into each of the 4 quadrants and test region search.
      */
+    public void testInsertAllQuadrants() {
+        node.insert(100, 100, "NW", 0, 0, 1024);
+        node.insert(600, 100, "NE", 0, 0, 1024);
+        node.insert(100, 600, "SW", 0, 0, 1024);
+        node.insert(600, 600, "SE", 0, 0, 1024);
 
-    public void tearDown() {
-
-        // Any cleanup logic needed after each test case (if required).
+        ArrayList results = new ArrayList();
+        node.regionSearch(0, 0, 1024, 1024, 0, 0, 1024, results);
+        assertEquals("Should find 4 points in region search", 4, results
+            .size());
     }
 
 
     /**
-     * Test the insert method of the InternalNode class.
-     * It should insert a point into the appropriate quadrant.
-     */
-    public void testInsert() {
-        InternalNode node = new InternalNode();
-        QuadNode result = node.insert(1, 1, "point1", 0, 0, 1024);
-        assertTrue("Insertion should not change node type",
-            result instanceof InternalNode);
-    }
-
-
-    /**
-     * Test the remove method of the InternalNode class.
-     * It should remove a point from the appropriate quadrant.
+     * Removes a point and checks if it is found.
      */
     public void testRemove() {
-        InternalNode node = new InternalNode();
         node.insert(1, 1, "point1", 0, 0, 1024);
         RemoveResult result = node.remove(1, 1, 0, 0, 1024);
-        assertNotNull("Point should be removed from InternalNode", result
-            .getRemovedPoint());
+        assertNotNull("Should return removed point", result.getRemovedPoint());
     }
 
 
     /**
-     * Test the removeByName method of the InternalNode class.
-     * It should remove a point by its name.
+     * Removes a point by name.
      */
     public void testRemoveByName() {
-        InternalNode node = new InternalNode();
         node.insert(1, 1, "point1", 0, 0, 1024);
         RemoveResult result = node.removeByName("point1", 0, 0, 1024);
-        assertNotNull("Point should be removed by name", result
+        assertNotNull("Should find and remove point by name", result
             .getRemovedPoint());
     }
 
 
     /**
-     * Test the shouldMerge method of the InternalNode class.
-     * It should return true if the node should merge.
+     * Should merge with <=3 points at same location.
      */
-    public void testShouldMerge() {
-        InternalNode node = new InternalNode();
-        node.insert(1, 1, "point1", 0, 0, 1024);
-        node.insert(1, 1, "point2", 0, 0, 1024);
-        assertTrue("InternalNode should merge if it has 3 or fewer points", node
+    public void testShouldMergeTrueWith3Points() {
+        node.insert(1, 1, "p1", 0, 0, 1024);
+        node.insert(1, 1, "p2", 0, 0, 1024);
+        node.insert(1, 1, "p3", 0, 0, 1024);
+        assertTrue("Should merge with 3 points at same location", node
             .shouldMerge());
     }
 
 
     /**
-     * Test the regionSearch method of the InternalNode class.
-     * It should perform a region search and return the matching points.
+     * Should merge even with >3 points at same (x,y)
      */
-    public void testRegionSearch() {
-        InternalNode node = new InternalNode();
-        node.insert(1, 1, "point1", 0, 0, 1024);
-        ArrayList results = new ArrayList();
-        node.regionSearch(0, 0, 100, 100, 0, 0, 1024, results);
-        assertEquals("Region search should return the inserted point", 1,
-            results.size());
+    public void testShouldMergeTrueWithSameLocationPoints() {
+        node.insert(1, 1, "p1", 0, 0, 1024);
+        node.insert(1, 1, "p2", 0, 0, 1024);
+        node.insert(1, 1, "p3", 0, 0, 1024);
+        node.insert(1, 1, "p4", 0, 0, 1024);
+        assertTrue("Should merge with >3 points at same location", node
+            .shouldMerge());
     }
 
 
     /**
-     * Test the dump method of the InternalNode class.
-     * It should include 'Internal' in the dump output.
+     * Should NOT merge if >3 points at different coordinates.
+     */
+    public void testShouldMergeFalseWithDifferentLocations() {
+        node.insert(100, 100, "p1", 0, 0, 1024); // NW
+        node.insert(600, 100, "p2", 0, 0, 1024); // NE
+        node.insert(100, 600, "p3", 0, 0, 1024); // SW
+        node.insert(600, 600, "p4", 0, 0, 1024); // SE
+        assertFalse("Should NOT merge with >3 points at different coords", node
+            .shouldMerge());
+    }
+
+
+    /**
+     * Region search returns correct number of matching points.
+     */
+    public void testRegionSearch() {
+        node.insert(10, 10, "p1", 0, 0, 1024);
+        ArrayList results = new ArrayList();
+        int visited = node.regionSearch(0, 0, 100, 100, 0, 0, 1024, results);
+        assertEquals(1, results.size());
+        assertTrue("Should visit at least one node", visited > 0);
+    }
+
+
+    /**
+     * Dump output contains the word "Internal".
      */
     public void testDump() {
-        InternalNode node = new InternalNode();
         StringBuilder sb = new StringBuilder();
         int[] nodesPrinted = new int[1];
         node.dump(0, sb, 0, 0, 1024, nodesPrinted);
-        assertTrue("Dump should contain 'Internal' in the output", sb.toString()
+        assertTrue("Dump output should contain 'Internal'", sb.toString()
             .contains("Internal"));
+    }
+
+
+    /**
+     * Ensure remove triggers a merge and returns the correct node type.
+     */
+    public void testRemoveTriggersMerge() {
+        node.insert(1, 1, "p1", 0, 0, 1024);
+        node.insert(1, 1, "p2", 0, 0, 1024);
+        node.insert(1, 1, "p3", 0, 0, 1024);
+        RemoveResult result = node.remove(1, 1, 0, 0, 1024);
+        assertTrue("Merged node should be LeafNode or EmptyNode", result
+            .getNode() instanceof LeafNode || result
+                .getNode() instanceof EmptyNode);
+    }
+
+
+    /**
+     * Tests the isEmpty method
+     */
+    public void testIsEmpty() {
+        assertFalse(node.isEmpty());
+    }
+
+
+    /**
+     * Tests the duplicates method
+     */
+    public void testDuplicates() {
+        node.insert(10, 10, "apple", 0, 0, 1024);
+        node.insert(10, 10, "banana", 0, 0, 1024);
+        HashMap<String, ArrayList> dups = new HashMap<>();
+        node.findDuplicates(dups, 0, 0, 1024);
+        assertEquals(1, dups.size(), 0.01);
+
     }
 }

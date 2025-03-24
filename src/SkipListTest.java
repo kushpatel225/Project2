@@ -169,4 +169,16 @@ public class SkipListTest extends TestCase {
         skipList.remove(5);
         assertEquals(0, skipList.size());
     }
+
+
+    /**
+     * Tests the dump method
+     */
+    public void testDump() {
+        skipList.dump();
+        assertEquals(0, skipList.size());
+        skipList.insert(new KVPair<>(5, "Five"));
+        skipList.dump();
+        assertEquals(1, skipList.size());
+    }
 }
